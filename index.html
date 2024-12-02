@@ -71,7 +71,6 @@
     <input type="text" id="version" placeholder="e.g., 16.1">
     <button onclick="predict()">Predict Release Date</button>
     <p id="result"></p>
-    <p id="next-release"></p>
 </div>
 <script>
     let models;
@@ -136,14 +135,6 @@
                 closestVersion = key;
                 closestDate = modelDate;
             }
-        }
-
-        // 显示最近的版本
-        if (closestDate) {
-            document.getElementById("next-release").innerHTML =
-                `Next closest release: <span class="highlight">iOS ${closestVersion}</span> on <span class="highlight">${closestDate.toISOString().split('T')[0]}</span>`;
-        } else {
-            document.getElementById("next-release").innerText = "No future releases found.";
         }
     }
 </script>
