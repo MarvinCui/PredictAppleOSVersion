@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>iOS Release Predictor</title>
+</head>
+<body>
+<h1>iOS Release Date Predictor</h1>
+<label for="version">Enter version number:</label>
+<input type="text" id="version" />
+<button onclick="predict()">Predict</button>
+<p id="result"></p>
+
+<script>
+    let models;
+    let minDate;
+
+    // 加载模型和数据
+    fetch('models.json')
+        .then(response => response.json())
+        .then(data => {
+            models = data.models;
+            minDate = new Date(data.min_date);
+        });
+
+    function predict() {
+        const version = parseFloat(document.getElementById("version").value);
+        if (!models || !version) {
+            document.getElementById("result").innerText = "Model not loaded or invalid input.";
+            return;
+        }
+
+        // 寻找对应的模型
+        const sortedKeys = Object.keys(models).map(Number).sort((a, b) => b - a);
+        for (const key of sortedKeys) {
+            if (version >= key) {
+                const model = models[key];
+                const predictedDays = model.coef * version + model.intercept;
+                const predictedDate = new Date(minDate);
+                predictedDate.setDate(predictedDate.getDate() + predictedDays);
+                document.getElementById("result").innerText =
+                    `Predicted release date: ${predictedDate.toISOString().split('T')[0]}`;
+                return;
+            }
+        }
+        document.getElementById("result").innerText = "No suitable model found.";
+    }
+</script>
+</body>
+</html>
