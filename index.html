@@ -10,23 +10,20 @@
             background: #f4f4f9;
             color: #333;
             margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
+            padding: 20px;
         }
         h1 {
             color: #2c3e50;
-            font-size: 2.5rem;
+            font-size: 2rem;
+            text-align: center; /* 居中标题 */
         }
         #predictor-container {
             background: #ffffff;
             border: 1px solid #ddd;
             border-radius: 10px;
             padding: 20px;
-            width: 300px;
+            max-width: 400px;
+            margin: 0 auto;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
         label {
@@ -40,6 +37,7 @@
             margin-bottom: 15px;
             border: 1px solid #ccc;
             border-radius: 5px;
+            box-sizing: border-box; /* 修复宽度问题 */
         }
         button {
             background: #3498db;
@@ -50,6 +48,7 @@
             cursor: pointer;
             border-radius: 5px;
             width: 100%;
+            box-sizing: border-box;
         }
         button:hover {
             background: #2980b9;
@@ -87,37 +86,55 @@
         });
 
     function predict() {
-        const version = parseFloat(document.getElementById("version").value);
+        const versionInput = document.getElementById("version").value.trim();
+        const version = parseFloat(versionInput);
         if (!models || isNaN(version)) {
-            document.getElementById("result").innerText = "Model not loaded or invalid input.";
+            document.getElementById("result").innerText = "Invalid input or model not loaded.";
             return;
         }
 
         const sortedKeys = Object.keys(models)
-            .sort((a, b) => parseFloat(b) - parseFloat(a));
+            .sort((a, b) => parseFloat(a) - parseFloat(b)); // 升序排列
 
+        let predictedDate = null;
+        let foundModel = false;
+
+        for (let i = 0; i < sortedKeys.length; i++) {
+            const key = sortedKeys[i];
+            const nextKey = sortedKeys[i + 1];
+            const model = models[key];
+
+            const startVersion = parseFloat(key);
+            const endVersion = nextKey ? parseFloat(nextKey) : startVersion + 1;
+
+            if (version >= startVersion && version < endVersion) {
+                foundModel = true;
+                const predictedDays = model.coef * version + model.intercept;
+                predictedDate = new Date(minDate.getTime() + predictedDays * 24 * 60 * 60 * 1000);
+                document.getElementById("result").innerHTML =
+                    `Predicted release date for <span class="highlight">iOS ${versionInput}</span>: <span class="highlight">${predictedDate.toISOString().split('T')[0]}</span>`;
+                break;
+            }
+        }
+
+        if (!foundModel) {
+            document.getElementById("result").innerText = "No suitable model found for the input version.";
+        }
+
+        // 找出距离未来最近的版本
         let closestVersion = null;
         let closestDate = null;
+        const today = new Date();
 
         for (const key of sortedKeys) {
             const model = models[key];
-            if (!model) continue;
+            const modelVersion = parseFloat(key);
+            const predictedDays = model.coef * modelVersion + model.intercept;
+            const modelDate = new Date(minDate.getTime() + predictedDays * 24 * 60 * 60 * 1000);
 
-            const predictedDays = model.coef * version + model.intercept;
-            const predictedDate = new Date(minDate);
-            predictedDate.setDate(predictedDate.getDate() + predictedDays);
-
-            // 如果是用户输入的版本，显示预测结果
-            if (version >= parseFloat(key)) {
-                document.getElementById("result").innerHTML =
-                    `Predicted release date for <span class="highlight">iOS ${version}</span>: <span class="highlight">${predictedDate.toISOString().split('T')[0]}</span>`;
-            }
-
-            // 找出距离未来最近的版本
-            const today = new Date();
-            if (!closestDate || (predictedDate > today && predictedDate < closestDate)) {
+            if (modelDate > today && (!closestDate || modelDate < closestDate)) {
                 closestVersion = key;
-                closestDate = predictedDate;
+                closestDate = modelDate;
             }
         }
 
