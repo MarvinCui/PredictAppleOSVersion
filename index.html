@@ -26,17 +26,30 @@
 
     function predict() {
         const version = parseFloat(document.getElementById("version").value);
-        if (!models || !version) {
+        if (!models || isNaN(version)) {
             document.getElementById("result").innerText = "Model not loaded or invalid input.";
             return;
         }
 
-        // 寻找对应的模型
-        const sortedKeys = Object.keys(models).map(Number).sort((a, b) => b - a);
+        const sortedKeys = Object.keys(models)
+            .map(Number) // 转为数字
+            .sort((a, b) => b - a); // 按降序排列
+
+        console.log("Sorted keys:", sortedKeys);
+
         for (const key of sortedKeys) {
+            console.log(`Checking key: ${key}`);
+            const model = models[key.toString()]; // 确保字符串访问
+
+            if (!model) {
+                console.error(`Model for key ${key} not found.`);
+                continue; // 跳过无效键
+            }
+
             if (version >= key) {
-                const model = models[key.toString()]; // 强制转换为字符串访问
-                if (!model || model.coef === undefined || model.intercept === undefined) {
+                console.log(`Using model for version: ${key}`, model);
+
+                if (model.coef === undefined || model.intercept === undefined) {
                     document.getElementById("result").innerText = "Model data is invalid.";
                     return;
                 }
@@ -44,11 +57,13 @@
                 const predictedDays = model.coef * version + model.intercept;
                 const predictedDate = new Date(minDate);
                 predictedDate.setDate(predictedDate.getDate() + predictedDays);
+
                 document.getElementById("result").innerText =
                     `Predicted release date: ${predictedDate.toISOString().split('T')[0]}`;
                 return;
             }
         }
+
         document.getElementById("result").innerText = "No suitable model found.";
     }
 </script>
