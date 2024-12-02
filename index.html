@@ -35,7 +35,12 @@
         const sortedKeys = Object.keys(models).map(Number).sort((a, b) => b - a);
         for (const key of sortedKeys) {
             if (version >= key) {
-                const model = models[key];
+                const model = models[key.toString()]; // 强制转换为字符串访问
+                if (!model || model.coef === undefined || model.intercept === undefined) {
+                    document.getElementById("result").innerText = "Model data is invalid.";
+                    return;
+                }
+
                 const predictedDays = model.coef * version + model.intercept;
                 const predictedDate = new Date(minDate);
                 predictedDate.setDate(predictedDate.getDate() + predictedDays);
