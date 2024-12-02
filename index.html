@@ -31,22 +31,22 @@
             return;
         }
 
+        // 保留 models 的原始键格式
         const sortedKeys = Object.keys(models)
-            .map(Number) // 转为数字
-            .sort((a, b) => b - a); // 按降序排列
+            .sort((a, b) => parseFloat(b) - parseFloat(a)); // 按数字降序排序
 
         console.log("Sorted keys:", sortedKeys);
 
         for (const key of sortedKeys) {
             console.log(`Checking key: ${key}`);
-            const model = models[key.toString()]; // 确保字符串访问
+            const model = models[key]; // 直接使用字符串键访问
 
             if (!model) {
                 console.error(`Model for key ${key} not found.`);
-                continue; // 跳过无效键
+                continue;
             }
 
-            if (version >= key) {
+            if (version >= parseFloat(key)) {
                 console.log(`Using model for version: ${key}`, model);
 
                 if (model.coef === undefined || model.intercept === undefined) {
