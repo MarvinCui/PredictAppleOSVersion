@@ -1,6 +1,6 @@
 # Release Predictor of OS by Apple
 
-## 🚀 Use the [following link](https://borancui.site/PredictiOSVersion/) to access the site.
+## 🚀 Use the [following link](http://borancui.site/PredictAppleOSVersion/) to access the site.
 
 # EN
 
