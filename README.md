@@ -1,10 +1,10 @@
-# iOS release time Prediction
+# Release Predictor of OS by Apple
 
 ## 🚀 Use the [following link](https://borancui.site/PredictiOSVersion/) to access the site.
 
 # EN
 
-This is a static site deployed on GitHub Pages that predicts iOS release times.
+This is a static site deployed on GitHub Pages that predicts iOS and other OS release times.
 
 The following techniques are used to improve prediction accuracy:
 
@@ -18,7 +18,7 @@ The results obtained are relatively accurate (Average ±2day).
 
 # CN
 
-这是一个部署在GitHub Pages上的静态站点，用来预测 iOS 发布时间。
+这是一个部署在GitHub Pages上的静态站点，用来预测 iOS 和其他系统的发布时间。
 
 主要用了以下技术来提高预测精准度：
 
