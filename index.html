@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>iOS Release Predictor</title>
     <style>
         body {
@@ -22,7 +22,7 @@
             border: 1px solid #ddd;
             border-radius: 10px;
             padding: 20px;
-            max-width: 400px;
+            max-width: 600px;
             margin: 0 auto;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
@@ -56,14 +56,13 @@
         p {
             margin-top: 15px;
             font-size: 1rem;
-            text-align: center;
         }
         .highlight {
             color: #27ae60;
             font-weight: bold;
         }
         footer {
-            margin-top: auto;
+            margin-top: 20px;
             text-align: center;
             padding: 10px 0;
             background: #f4f4f9;
@@ -77,82 +76,247 @@
         footer a:hover {
             color: #2980b9;
         }
+        .os-list {
+            margin-top: 15px;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+        .future-version {
+            margin-top: 25px;
+            font-style: italic;
+            border-top: 1px solid #eee;
+            padding-top: 15px;
+        }
     </style>
 </head>
 <body>
 <div id="predictor-container">
     <h1>iOS Release Predictor</h1>
     <label for="version">Enter iOS Version:</label>
-    <input type="text" id="version" placeholder="Only major.minor format (e.g., 16.1)">
+    <input
+            type="text"
+            id="version"
+            placeholder="Only major.minor format (e.g., 16.1)"
+    />
     <button onclick="predict()">Predict Release Date</button>
     <p id="result"></p>
+    <div id="os-list" class="os-list"></div>
+    <!-- 显示最近的未来系统版本信息 -->
+    <div id="future-version" class="future-version"></div>
 </div>
 <footer>
-    🚀 This Website Powered by <a href="https://borancui.site" target="_blank">Boran Cui</a>.
+    🚀 This Website Powered by
+    <a href="https://borancui.site" target="_blank">Boran Cui</a>.
 </footer>
+
 <script>
     let models;
     let minDate;
 
     // 加载模型和数据
-    fetch('models.json')
-        .then(response => response.json())
-        .then(data => {
+    fetch("models.json")
+        .then((response) => response.json())
+        .then((data) => {
             models = data.models;
             minDate = new Date(data.min_date);
+            // 加载完成后自动显示最近的未来版本
+            displayClosestFutureVersion();
+        })
+        .catch((error) => {
+            console.error("Error loading models.json:", error);
+            document.getElementById("future-version").innerText = "Error loading model data.";
         });
 
-    function predict() {
-        const versionInput = document.getElementById("version").value.trim();
-        const version = parseFloat(versionInput);
-        if (!models || isNaN(version)) {
-            document.getElementById("result").innerText = "Invalid input or model not loaded.";
-            return;
-        }
+    /**
+     * 根据 iOS 版本号，计算对应其他系统的版本号
+     * @param {string} iOSVersionStr - iOS 版本号，格式为 "major.minor"
+     * @returns {object|null} - 包含各系统版本号的对象，或 null 如果输入格式错误
+     */
+    function getOSVersions(iOSVersionStr) {
+        const parts = iOSVersionStr.split(".");
+        if (parts.length < 1) return null;
+
+        const iOSMajor = parseInt(parts[0], 10);
+        const iOSMinor = parts.length > 1 ? parseInt(parts[1], 10) : 0;
+        if (isNaN(iOSMajor) || isNaN(iOSMinor)) return null;
+
+        // iPadOS, tvOS 与 iOS 相同版本
+        const iPadOS = `${iOSMajor}.${iOSMinor}`;
+        const tvOS = `${iOSMajor}.${iOSMinor}`;
+
+        // watchOS = iOSMajor - 7
+        let watchOSMajor = iOSMajor - 7;
+        let watchOSMinor = iOSMinor;
+        const watchOS = watchOSMajor < 1
+            ? "N/A"
+            : `${watchOSMajor}.${watchOSMinor}`;
+
+        // macOS = iOSMajor - 3（只输出数字版本号，不需要加 macOS 前缀）
+        let macOSMajor = iOSMajor - 3;
+        let macOSMinor = iOSMinor;
+        const macOS = macOSMajor < 1
+            ? "N/A"
+            : `${macOSMajor}.${macOSMinor}`;
+
+        // visionOS = iOSMajor - 16
+        let visionOSMajor = iOSMajor - 16;
+        let visionOSMinor = iOSMinor;
+        const visionOS = visionOSMajor < 1
+            ? "N/A"
+            : `${visionOSMajor}.${visionOSMinor}`;
+
+        return {
+            iOS: iOSVersionStr,
+            iPadOS,
+            tvOS,
+            watchOS,
+            macOS,
+            visionOS,
+        };
+    }
+
+    /**
+     * 使用已加载模型，根据输入版本预测发布日期
+     * @param {number} versionNumber - iOS 版本号，浮点数格式
+     * @returns {Date|null} - 预测的发布日期，或 null 如果没有找到合适的模型
+     */
+    function getPredictedDateForVersion(versionNumber) {
+        if (!models) return null;
 
         const sortedKeys = Object.keys(models)
-            .sort((a, b) => parseFloat(a) - parseFloat(b)); // 升序排列
+            .map(key => parseFloat(key))
+            .sort((a, b) => a - b); // 升序排列
 
         let predictedDate = null;
-        let foundModel = false;
 
         for (let i = 0; i < sortedKeys.length; i++) {
             const key = sortedKeys[i];
             const nextKey = sortedKeys[i + 1];
-            const model = models[key];
+            const modelKey = key.toFixed(1);
+            const model = models[modelKey];
 
-            const startVersion = parseFloat(key);
-            const endVersion = nextKey ? parseFloat(nextKey) : startVersion + 1;
+            if (!model) continue; // 跳过没有模型的数据
 
-            if (version >= startVersion && version < endVersion) {
-                foundModel = true;
-                const predictedDays = model.coef * version + model.intercept;
-                predictedDate = new Date(minDate.getTime() + predictedDays * 24 * 60 * 60 * 1000);
-                document.getElementById("result").innerHTML =
-                    `Predicted release date for <span class="highlight">iOS ${versionInput}</span>: <span class="highlight">${predictedDate.toISOString().split('T')[0]}</span>`;
+            const startVersion = key;
+            const endVersion = nextKey ? nextKey : startVersion + 1;
+
+            if (versionNumber >= startVersion && versionNumber < endVersion) {
+                const predictedDays = model.coef * versionNumber + model.intercept;
+                predictedDate = new Date(
+                    minDate.getTime() + predictedDays * 24 * 60 * 60 * 1000
+                );
                 break;
             }
         }
 
-        if (!foundModel) {
-            document.getElementById("result").innerText = "No suitable model found for the input version.";
+        return predictedDate;
+    }
+
+    /**
+     * 显示距离今天最近的未来版本
+     */
+    function displayClosestFutureVersion() {
+        const futureVersionEl = document.getElementById("future-version");
+        futureVersionEl.innerHTML = ""; // 清空
+
+        if (!models) {
+            futureVersionEl.innerText = "Models not loaded yet.";
+            return;
         }
 
-        // 找出距离未来最近的版本
-        let closestVersion = null;
+        const sortedKeys = Object.keys(models)
+            .map(key => parseFloat(key))
+            .sort((a, b) => a - b); // 升序排列
+
+        // 找到最新的主版本
+        const latestMajorVersion = sortedKeys[sortedKeys.length - 1];
+        const latestMajorStr = latestMajorVersion.toFixed(1);
+
+        // 定义子版本的范围，例如0.1到10.0
+        const maxMinor = 10;
+        let closestVersionKey = null;
         let closestDate = null;
         const today = new Date();
 
-        for (const key of sortedKeys) {
-            const model = models[key];
-            const modelVersion = parseFloat(key);
-            const predictedDays = model.coef * modelVersion + model.intercept;
-            const modelDate = new Date(minDate.getTime() + predictedDays * 24 * 60 * 60 * 1000);
+        for (let minor = 1; minor <= maxMinor; minor++) {
+            const versionNumber = parseFloat((latestMajorVersion + minor * 0.1).toFixed(1));
+            const predictedDate = getPredictedDateForVersion(versionNumber);
 
-            if (modelDate > today && (!closestDate || modelDate < closestDate)) {
-                closestVersion = key;
-                closestDate = modelDate;
+            // 调试信息（可选）
+            // console.log(`Version ${versionNumber}: Predicted Date = ${predictedDate}`);
+
+            if (predictedDate && predictedDate > today) {
+                closestVersionKey = versionNumber.toFixed(1);
+                closestDate = predictedDate;
+                break; // 找到第一个符合条件的版本即可
             }
+        }
+
+        if (closestVersionKey && closestDate) {
+            const futureOSMap = getOSVersions(closestVersionKey);
+            if (futureOSMap) {
+                futureVersionEl.innerHTML = `
+            <div>
+              Predicted release date of the nearest future version: <span class="highlight">${closestDate.toISOString().split("T")[0]}</span><br/>
+              <br/>
+              <strong>List of systems with upcoming releases:</strong><br/>
+              iPadOS: <span class="highlight">${futureOSMap.iPadOS}</span><br/>
+              tvOS: <span class="highlight">${futureOSMap.tvOS}</span><br/>
+              watchOS: <span class="highlight">${futureOSMap.watchOS}</span><br/>
+              macOS: <span class="highlight">${futureOSMap.macOS}</span><br/>
+              visionOS: <span class="highlight">${futureOSMap.visionOS}</span>
+            </div>
+          `;
+            }
+        } else {
+            // 如果在主版本的子版本中没有找到未来版本，可以考虑查找下一个主版本
+            futureVersionEl.innerText = "No future version found.";
+        }
+    }
+
+    /**
+     * 点击按钮后，预测用户输入的版本发布时间，并输出对应OS版本
+     */
+    function predict() {
+        const versionInput = document.getElementById("version").value.trim();
+        const versionNumber = parseFloat(versionInput);
+        const resultEl = document.getElementById("result");
+        const osListEl = document.getElementById("os-list");
+
+        // 清空之前的结果
+        resultEl.innerHTML = "";
+        osListEl.innerHTML = "";
+
+        if (!models || isNaN(versionNumber)) {
+            resultEl.innerText = "Invalid input or model not loaded.";
+            return;
+        }
+
+        // 预测用户输入版本的发布日期
+        const predictedDate = getPredictedDateForVersion(versionNumber);
+        if (!predictedDate) {
+            resultEl.innerText = "No suitable model found for the input version.";
+            return;
+        }
+
+        // 显示 iOS 发布预测
+        resultEl.innerHTML = `
+        Predicted release date for <span class="highlight">iOS ${versionInput}</span>:
+        <span class="highlight">${predictedDate.toISOString().split("T")[0]}</span>
+      `;
+
+        // 显示其他系统对应版本
+        const osMap = getOSVersions(versionInput);
+        if (osMap) {
+            const { iPadOS, tvOS, watchOS, macOS, visionOS } = osMap;
+            osListEl.innerHTML = `
+          <strong>Equivalent Versions:</strong><br/>
+          iPadOS: <span class="highlight">${iPadOS}</span><br/>
+          tvOS: <span class="highlight">${tvOS}</span><br/>
+          watchOS: <span class="highlight">${watchOS}</span><br/>
+          macOS: <span class="highlight">${macOS}</span><br/>
+          visionOS: <span class="highlight">${visionOS}</span>
+        `;
         }
     }
 </script>
