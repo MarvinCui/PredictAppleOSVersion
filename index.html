@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -20,7 +20,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="appleOS Release Predictor">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-        
+
     <link rel="apple-touch-icon" sizes="180x180" href="https://borancui.site/PredictAppleOSVersion/images/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
@@ -73,6 +73,7 @@
             border-radius: 5px;
             width: 100%;
             box-sizing: border-box;
+            transition: background 0.3s;
         }
         button:hover {
             background: #2980b9;
@@ -95,6 +96,7 @@
             text-decoration: none;
             color: #3498db;
             font-weight: bold;
+            transition: color 0.3s;
         }
         footer a:hover {
             color: #2980b9;
@@ -110,7 +112,7 @@
             border-top: 1px solid #eee;
             padding-top: 15px;
         }
-        /* 新增的 Useful Info 部分样式 */
+        /* Useful Info 部分样式 */
         #useful-info {
             background: #ffffff;
             border: 1px solid #ddd;
@@ -120,29 +122,88 @@
             margin: 30px auto 0 auto;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
+
         #useful-info h2 {
             color: #2c3e50;
             font-size: 1.5rem;
             margin-bottom: 15px;
+            display: flex;
+            align-items: center;
         }
+
         #useful-info ul {
             list-style-type: disc;
             padding-left: 20px;
         }
+
         #useful-info li {
             margin-bottom: 10px;
         }
+
         #useful-info a {
             color: #3498db;
             text-decoration: none;
+            transition: color 0.3s;
         }
+
         #useful-info a:hover {
             color: #2980b9;
         }
+
         #useful-info .product-list {
-            margin-top: 15px;
+            margin-top: 25px;
             font-size: 0.95rem;
             line-height: 1.6;
+        }
+
+        #useful-info .product-list h3 {
+            color: #2c3e50;
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+        }
+
+        /* 产品列表样式 */
+        .product-list ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .product-list li {
+            display: flex;
+            align-items: baseline;
+            margin-bottom: 10px;
+        }
+
+        .product-en {
+            font-weight: bold;
+            color: #34495e;
+            margin-right: 5px;
+        }
+
+        .separator {
+            color: #95a5a6;
+            margin-right: 5px;
+        }
+
+        .product-zh {
+            color: #27ae60;
+            font-size: 0.95rem;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 600px) {
+            .product-list li {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .separator {
+                display: none;
+            }
+
+            .product-en, .product-zh {
+                margin-right: 0;
+            }
         }
     </style>
 </head>
@@ -162,37 +223,188 @@
     <div id="future-version" class="future-version"></div>
 </div>
 
-<!-- 新增的 🔗 Useful Info 部分 -->
+<!-- 优化后的 Useful Info 部分 -->
 <div id="useful-info">
     <h2>🔗 Useful Info</h2>
     <ul>
         <li><a href="https://developer.apple.com/design/human-interface-guidelines/" target="_blank" rel="noopener noreferrer">Apple Human Interface Guidelines (HIG)</a></li>
         <li><a href="https://developer.apple.com/documentation/" target="_blank" rel="noopener noreferrer">Apple Developer Documentation</a></li>
-        <li><a href="https://help.apple.com/pdf/applestyleguide/en_US/apple-style-guide.pdf" target="_blank" rel="noopener noreferrer">Apple Style Guide</a></li>
+        <li><a href="https://help.apple.com/pdf/applestyleguide/en_US/apple-style-guide.pdf" target="_blank" rel="noopener noreferrer">Apple Style Guide (PDF)</a></li>
         <li><a href="https://developer.apple.com/design/resources/" target="_blank" rel="noopener noreferrer">Apple Design Resources</a></li>
-        <li><a href="https://developer.apple.com/wwdc24/" target="_blank" rel="noopener noreferrer">WWDC</a></li>
+        <li><a href="https://developer.apple.com/wwdc/" target="_blank" rel="noopener noreferrer">WWDC</a></li>
         <li><a href="https://www.apple.com/apple-events/" target="_blank" rel="noopener noreferrer">Apple Events</a></li>
     </ul>
     <p>
-        <a href="https://www.apple.com/newsroom/" target="_blank" rel="noopener noreferrer">Apple Newsroom (EN)</a> | 
+        <a href="https://www.apple.com/newsroom/" target="_blank" rel="noopener noreferrer">Apple Newsroom (EN)</a>
+        <span class="separator">|</span>
         <a href="https://www.apple.com.cn/newsroom/" target="_blank" rel="noopener noreferrer">Apple Newsroom (中文)</a>
     </p>
     <div class="product-list">
-        <h3>当前在售 Apple 产品标准名称：</h3>
+        <h3>当前在售 Apple 产品/服务标准名称：</h3>
         <ul>
-            <li>iPhone 16 Series | iPhone 16 系列</li>
-            <li>iPhone 16 Pro Series | iPhone 16 Pro 系列：Camera Control | 相机控制</li>
-            <li>Apple Intelligence | Apple 智能：Image Playground | 图乐园</li>
-            <li>iPad Pro [11/13]-inch (M4) | [11/13] 英寸 iPad Pro (M4)</li>
-            <li>iPad Air [11/13]-inch (M2) | [11/13] 英寸 iPad Air (M2)</li>
-            <li>iPad mini (A17 Pro)</li>
-            <li>iPad (10th generation) | iPad (第10代）</li>
-            <li>MacBook Pro ([14/16]-inch, 2024) | MacBook Pro ([14/16] 英寸，2024 年)</li>
-            <li>MacBook Air ([13/15]-inch, M3, 2024) | MacBook Air ([13/15] 英寸，M3，2024 年)</li>
-            <li>Apple Watch Series 10</li>
-            <li>Apple TV 4K (3rd generation)</li>
-            <li>AirPods Pro 2 with MagSafe Charging Case | (USB-C) 配备 MagSafe 充电盒 (USB-C) 的 AirPods Pro 2 </li>
-            <li>AirPods 4 (ANC) & AirPods 4</li>
+            <li>
+                <span class="product-en">iPhone</span>
+            </li>
+            <li>
+                <span class="product-en">&nbsp &nbsp ├ iPhone 16 Series</span>
+                <span class="separator">|</span>
+                <span class="product-zh">iPhone 16 系列</span>
+            </li>
+            <li>
+                <span class="product-en">&nbsp &nbsp └ iPhone 16 Pro Series</span>
+                <span class="separator">|</span>
+                <span class="product-zh">iPhone 16 Pro 系列</span>
+            </li>
+            <li>
+                <span class="product-en">&nbsp &nbsp &nbsp &nbsp └ Camera Control</span>
+                <span class="separator">|</span>
+                <span class="product-zh">相机控制</span>
+            </li>
+            <li>
+                <span class="product-en">iPad</span>
+            </li>
+            <li>
+                <span class="product-en">&nbsp &nbsp ├ iPad Pro 11/13-inch (M4)</span>
+                <span class="separator">|</span>
+                <span class="product-zh">11/13 英寸 iPad Pro (M4)</span>
+            </li>
+            <li>
+                <span class="product-en">&nbsp &nbsp ├ iPad Air 11/13-inch (M2)</span>
+                <span class="separator">|</span>
+                <span class="product-zh">11/13 英寸 iPad Air (M2)</span>
+            </li>
+            <li>
+                <span class="product-en">&nbsp &nbsp ├ iPad mini (A17 Pro)</span>
+            </li>
+            <li>
+                <span class="product-en">&nbsp &nbsp └ iPad (10th generation)</span>
+                <span class="separator">|</span>
+                <span class="product-zh">iPad (第10代）</span>
+            </li>
+            <li>
+                <span class="product-en">Mac</span>
+            </li>
+            <li>
+                <span class="product-en">&nbsp &nbsp ├ MacBook Air (13/15-inch, M3, 2024)</span>
+                <span class="separator">|</span>
+                <span class="product-zh">MacBook Air (13/15 英寸，M3，2024 年)</span>
+            </li>
+            <li>
+                <span class="product-en">&nbsp &nbsp ├ MacBook Pro (14/16-inch, 2024)</span>
+                <span class="separator">|</span>
+                <span class="product-zh">MacBook Pro (14/16 英寸，2024 年)</span>
+            </li>
+            <li>
+                <span class="product-en">&nbsp &nbsp ├ iMac (24-inch, 2024, Two/Four ports)</span>
+                <span class="separator">|</span>
+                <span class="product-zh">iMac（24 英寸，2024 年，两/四个端口）</span>
+            </li>
+            <li>
+                <span class="product-en">&nbsp &nbsp ├ Mac mini (2023)</span>
+                <span class="separator">|</span>
+                <span class="product-zh">Mac mini (2023 年)</span>
+            </li>
+            <li>
+                <span class="product-en">&nbsp &nbsp ├ Mac Studio (2024)</span>
+                <span class="separator">|</span>
+                <span class="product-zh">Mac Studio (2024 年)</span>
+            </li>
+            <li>
+                <span class="product-en">&nbsp &nbsp ├ Mac Pro (2023)</span>
+                <span class="separator">|</span>
+                <span class="product-zh">Mac Pro (2023 年)</span>
+            </li>
+            <li>
+                <span class="product-en">&nbsp &nbsp └ Apple Pencil</span>
+            </li>
+            <li>
+                <span class="product-en">&nbsp &nbsp &nbsp &nbsp ├ Apple Pencil Pro</span>
+            </li>
+            <li>
+                <span class="product-en">&nbsp &nbsp &nbsp &nbsp ├ Apple Pencil (2nd generation)</span>
+                <span class="separator">|</span>
+                <span class="product-zh">Apple Pencil（第二代）</span>
+            </li>
+            <li>
+                <span class="product-en">&nbsp &nbsp &nbsp &nbsp └ Apple Pencil (USB-C)</span>
+            </li>
+            <li>
+                <span class="product-en">Watch</span>
+            </li>
+            <li>
+                <span class="product-en">&nbsp &nbsp ├ Apple Watch Series 10</span>
+            </li>
+            <li>
+                <span class="product-en">&nbsp &nbsp ├ Apple Watch Ultra 2</span>
+            </li>
+            <li>
+                <span class="product-en">&nbsp &nbsp └ Apple Watch SE (2nd generation)</span>
+                <span class="separator">|</span>
+                <span class="product-zh">Apple Watch SE（第2代）</span>
+            </li>
+            <li>
+                <span class="product-en">Vision</span>
+            </li>
+            <li>
+                <span class="product-en">&nbsp &nbsp └ Apple Vision Pro</span>
+            </li>
+            <li>
+                <span class="product-en">AirPods, TV & Home</span>
+            </li>
+            <li>
+                <span class="product-en">&nbsp &nbsp ├ AirPods Pro 2 with MagSafe Charging Case (USB-C)</span>
+                <span class="separator">|</span>
+                <span class="product-zh">配备 MagSafe 充电盒 (USB-C) 的 AirPods Pro 2</span>
+            </li>
+            <li>
+                <span class="product-en">&nbsp &nbsp ├ AirPods 4 (ANC) & AirPods 4</span>
+                <span class="separator">|</span>
+                <span class="product-zh">AirPods 4 (ANC) & AirPods 4</span>
+            </li>
+            <li>
+                <span class="product-en">&nbsp &nbsp ├ AirPods Max (USB-C)</span>
+            </li>
+            <li>
+                <span class="product-en">&nbsp &nbsp ├ HomePod mini</span>
+            </li>
+            <li>
+                <span class="product-en">&nbsp &nbsp ├ HomePod (2nd generation)</span>
+                <span class="separator">|</span>
+                <span class="product-zh">HomePod（第二代）</span>
+            </li>
+            <li>
+                <span class="product-en">&nbsp &nbsp └ Apple TV 4K (3rd generation)</span>
+                <span class="separator">|</span>
+                <span class="product-zh">Apple TV 4K (第三代)</span>
+            </li>
+            <li>
+                <span class="product-en">Apple 服务</span>
+            </li>
+            <li>
+                <span class="product-en">&nbsp &nbsp └ Apple Intelligence</span>
+                <span class="separator">|</span>
+                <span class="product-zh">Apple 智能</span>
+            </li>
+            <li>
+                <span class="product-en">&nbsp &nbsp &nbsp &nbsp └ Image Playground</span>
+                <span class="separator">|</span>
+                <span class="product-zh">图乐园</span>
+            </li>
+            <li>
+                <span class="product-en">&nbsp &nbsp &nbsp &nbsp └ Genmoji</span>
+                <span class="separator">|</span>
+                <span class="product-zh">智绘表情</span>
+            </li>
+            <li>
+                <span class="product-en">&nbsp &nbsp &nbsp &nbsp └ Image Wand</span>
+                <span class="separator">|</span>
+                <span class="product-zh">图像魔法棒</span>
+            </li>
+            <li>
+                <span class="product-en">&nbsp &nbsp &nbsp &nbsp └ Writing Tools</span>
+                <span class="separator">|</span>
+                <span class="product-zh">写作工具</span>
+            </li>
         </ul>
     </div>
 </div>
@@ -349,18 +561,18 @@
             const futureOSMap = getOSVersions(closestVersionKey);
             if (futureOSMap) {
                 futureVersionEl.innerHTML = `
-            <div>
-              Predicted release date of the nearest future version: <span class="highlight">${closestDate.toISOString().split("T")[0]}</span><br/>
-              <br/>
-              <strong>List of systems with upcoming releases:</strong><br/>
-              <a href="https://www.apple.com/ios/" target="_blank" rel="noopener noreferrer">iOS</a>: <span class="highlight">${futureOSMap.iOS}</span><br/>
-              <a href="https://www.apple.com/ipados/" target="_blank" rel="noopener noreferrer">iPadOS</a>: <span class="highlight">${futureOSMap.iPadOS}</span><br/>
-              <a href="https://www.apple.com/tv-home/" target="_blank" rel="noopener noreferrer">tvOS</a>: <span class="highlight">${futureOSMap.tvOS}</span><br/>
-              <a href="https://www.apple.com/watchos/" target="_blank" rel="noopener noreferrer">watchOS</a>: <span class="highlight">${futureOSMap.watchOS}</span><br/>
-              <a href="https://www.apple.com/macos/" target="_blank" rel="noopener noreferrer">macOS</a>: <span class="highlight">${futureOSMap.macOS}</span><br/>
-              <a href="https://www.apple.com/visionos/" target="_blank" rel="noopener noreferrer">visionOS</a>: <span class="highlight">${futureOSMap.visionOS}</span>
-            </div>
-          `;
+                <div>
+                  Predicted release date of the nearest future version: <span class="highlight">${closestDate.toISOString().split("T")[0]}</span><br/>
+                  <br/>
+                  <strong>List of systems with upcoming releases:</strong><br/>
+                  <a href="https://www.apple.com/ios/" target="_blank" rel="noopener noreferrer">iOS</a>: <span class="highlight">${futureOSMap.iOS}</span><br/>
+                  <a href="https://www.apple.com/ipados/" target="_blank" rel="noopener noreferrer">iPadOS</a>: <span class="highlight">${futureOSMap.iPadOS}</span><br/>
+                  <a href="https://www.apple.com/tv-home/" target="_blank" rel="noopener noreferrer">tvOS</a>: <span class="highlight">${futureOSMap.tvOS}</span><br/>
+                  <a href="https://www.apple.com/watchos/" target="_blank" rel="noopener noreferrer">watchOS</a>: <span class="highlight">${futureOSMap.watchOS}</span><br/>
+                  <a href="https://www.apple.com/macos/" target="_blank" rel="noopener noreferrer">macOS</a>: <span class="highlight">${futureOSMap.macOS}</span><br/>
+                  <a href="https://www.apple.com/visionos/" target="_blank" rel="noopener noreferrer">visionOS</a>: <span class="highlight">${futureOSMap.visionOS}</span>
+                </div>
+              `;
             }
         } else {
             // 如果在主版本的子版本中没有找到未来版本，可以考虑查找下一个主版本
@@ -395,22 +607,22 @@
 
         // 显示 iOS 发布预测
         resultEl.innerHTML = `
-        Predicted release date for <span class="highlight">iOS ${versionInput}</span>:
-        <span class="highlight">${predictedDate.toISOString().split("T")[0]}</span>
-      `;
+            Predicted release date for <span class="highlight">iOS ${versionInput}</span>:
+            <span class="highlight">${predictedDate.toISOString().split("T")[0]}</span>
+          `;
 
         // 显示其他系统对应版本
         const osMap = getOSVersions(versionInput);
         if (osMap) {
             const { iPadOS, tvOS, watchOS, macOS, visionOS } = osMap;
             osListEl.innerHTML = `
-          <strong>Equivalent Versions:</strong><br/>
-          iPadOS: <span class="highlight">${iPadOS}</span><br/>
-          tvOS: <span class="highlight">${tvOS}</span><br/>
-          watchOS: <span class="highlight">${watchOS}</span><br/>
-          macOS: <span class="highlight">${macOS}</span><br/>
-          visionOS: <span class="highlight">${visionOS}</span>
-        `;
+              <strong>Equivalent Versions:</strong><br/>
+              iPadOS: <span class="highlight">${iPadOS}</span><br/>
+              tvOS: <span class="highlight">${tvOS}</span><br/>
+              watchOS: <span class="highlight">${watchOS}</span><br/>
+              macOS: <span class="highlight">${macOS}</span><br/>
+              visionOS: <span class="highlight">${visionOS}</span>
+            `;
         }
     }
 </script>
