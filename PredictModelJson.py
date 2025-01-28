@@ -42,3 +42,5 @@ output = {
 }
 with open('models.json', 'w') as f:
     json.dump(output, f)
+
+print("Model training complete!")
