@@ -1,29 +1,51 @@
-# Release Predictor of OS by Apple
+# 🍎 Release Predictor of OS by Apple
 
-## 🚀 Use the [following link](http://borancui.site/PredictAppleOSVersion/) to access the site.
+**Predict the future of Apple operating systems — with just a version number.**
 
-# EN
-
-This is a static site deployed on GitHub Pages that predicts iOS and other OS release times.
-
-The following techniques are used to improve prediction accuracy:
-
-1. Segment fitting
-
-2. Increase the weight of the last three major versions by 10% and reduce the weight of the other versions by 5%
-
-The results obtained are relatively accurate (Average ±2day).
+> This project uses polynomial regression models to predict the release dates of Apple OSs (iOS, macOS, watchOS, visionOS, etc.) based on past data.
 
 ---
 
-# CN
+## 🔍 Features | 特性一览
 
-这是一个部署在GitHub Pages上的静态站点，用来预测 iOS 和其他系统的发布时间。
+- 🧠 **AI-Based Date Prediction** — Input an iOS version (like `16.1`), and the model estimates its release date.
+- 🌐 **Cross-Platform Mapping** — Instantly see equivalent versions for:
+  - iPadOS
+  - tvOS
+  - macOS
+  - watchOS
+  - visionOS
+- 🪞 **未来版本预测** — 显示距离最近的未来主版本信息。
+- 📎 **Useful Apple Dev Resources** — 一键跳转到 Apple 官方设计与开发文档。
 
-主要用了以下技术来提高预测精准度：
+---
 
-1. 分段拟合
+## 🚀 Live Demo | 在线体验
 
-2. 把最近三个大版本的权重增加 10%，其他版本的权重减少 5%
+👉 [Try it here](https://borancui.site/PredictAppleOSVersion)  
+👨‍💻 Developed by [Boran Cui](https://borancui.site)
 
-得到的结果较为精确。（平均 ±2天）
+---
+
+## 🧠 How it works | 工作原理简述
+
+The site loads a set of trained models from `models.json`, each fitting a version range with its own linear regression:
+
+```js
+predictedDays = coef * versionNumber + intercept
+releaseDate = minDate + predictedDays
+```
+
+---
+
+## 📁 Project Structure | 项目结构
+
+```
+📦 PredictAppleOSVersion
+├── index.html            # Main UI and logic
+├── models.json           # Release prediction models
+├── images/               # Assets and icons
+└── styles/               # Embedded in HTML (for now)
+```
+
+**“Apple doesn’t tell you the date. But now, you know.” 🍏**
